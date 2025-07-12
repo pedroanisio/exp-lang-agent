@@ -494,8 +494,9 @@ class TestDatabaseModels:
         original_updated_at = user.updated_at
 
         # Wait a moment and update
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.5)  # Increased delay for timestamp precision
         user.username = "updatedtimestamp"
+        await db_session.flush()  # Ensure changes are flushed
         await db_session.commit()
         await db_session.refresh(user)
 

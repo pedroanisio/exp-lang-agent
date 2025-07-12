@@ -88,14 +88,23 @@ class DatabaseManager:
     async def initialize(self) -> None:
         """Initialize database engine and create tables."""
         try:
-            # Create async engine with connection pooling
+            # Create async engine with appropriate configuration
+            engine_kwargs = {
+                "echo": self.echo,
+            }
+            
+            # Add pool parameters only for non-SQLite databases
+            if not self.database_url.startswith("sqlite"):
+                engine_kwargs.update({
+                    "pool_size": 20,
+                    "max_overflow": 30,
+                    "pool_pre_ping": True,
+                    "pool_recycle": 3600,  # 1 hour
+                })
+            
             self.engine = create_async_engine(
                 self.database_url,
-                echo=self.echo,
-                pool_size=20,
-                max_overflow=30,
-                pool_pre_ping=True,
-                pool_recycle=3600,  # 1 hour
+                **engine_kwargs
             )
 
             # Create session factory
