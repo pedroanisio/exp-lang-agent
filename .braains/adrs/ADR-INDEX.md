@@ -8,9 +8,9 @@
 
 ## ADR Statistics
 
-- **Total ADRs**: 7
+- **Total ADRs**: 10
 - **Accepted**: 7
-- **Proposed**: 0
+- **Proposed**: 3
 - **Rejected**: 0
 - **Deprecated**: 0
 - **Superseded**: 0
@@ -26,6 +26,9 @@
 | [ADR-005](./ADR-005-authentication-strategy.md) | JWT-Based Authentication Strategy | Accepted | 2025-07-12 | US-003 - FastAPI Production Interface (Auth) | Level 2 |
 | [ADR-006](./ADR-006-docker-deployment-strategy.md) | Docker Containerization and Deployment Strategy | Accepted | 2025-07-12 | US-007 - Docker Production Deployment | Level 1 |
 | [ADR-007](./ADR-007-tdd-methodology.md) | Test-Driven Development (TDD) Methodology Implementation | Accepted | 2025-07-12 | Cross-cutting concern for all user stories | Level 1 |
+| [ADR-008](./ADR-008-database-strategy-resolution.md) | Database Strategy Resolution - SQLite vs PostgreSQL | Proposed | 2025-07-12 | Resolve ADR-004 compliance gap | Level 1 |
+| [ADR-009](./ADR-009-docker-implementation-strategy.md) | Docker Containerization Implementation Strategy | Proposed | 2025-07-12 | US-007 - Docker Production Deployment | Level 1 |
+| [ADR-010](./ADR-010-api-route-architecture.md) | API Route Architecture and Organization Pattern | Proposed | 2025-07-12 | US-003 - FastAPI Production Interface | Level 2 |
 
 ## ADR Categories
 
@@ -35,10 +38,13 @@
 - **ADR-004**: PostgreSQL for State Management and Session Persistence
 - **ADR-006**: Docker Containerization and Deployment Strategy
 - **ADR-007**: Test-Driven Development (TDD) Methodology Implementation
+- **ADR-008**: Database Strategy Resolution - SQLite vs PostgreSQL
+- **ADR-009**: Docker Containerization Implementation Strategy
 
 ### Architecture Patterns (Level 2)
 - **ADR-001**: Knowledge Database Architecture (Hybrid Neo4j/ChromaDB)
 - **ADR-005**: JWT-Based Authentication Strategy
+- **ADR-010**: API Route Architecture and Organization Pattern
 
 ### Security Decisions
 - **ADR-005**: JWT-Based Authentication Strategy
