@@ -563,3 +563,174 @@ class DetailedHealthResponse(BaseModel):
     external_services: ExternalServicesHealthResponse = Field(..., description="External services health")
     system_metrics: Dict[str, Any] = Field(..., description="System metrics")
 
+
+
+# Project Management Response Models
+class ProjectResponse(BaseModel):
+    """Response model for project operations."""
+    
+    id: str = Field(..., description="Project ID")
+    name: str = Field(..., description="Project name")
+    description: Optional[str] = Field(None, description="Project description")
+    user_id: str = Field(..., description="ID of the project owner")
+    created_at: str = Field(..., description="Creation timestamp")
+    updated_at: str = Field(..., description="Last update timestamp")
+
+
+class ProjectListResponse(BaseModel):
+    """Response model for project listing."""
+    
+    projects: List[ProjectResponse] = Field(..., description="List of projects")
+    total: int = Field(..., description="Total number of projects")
+    page: int = Field(..., description="Current page number")
+    per_page: int = Field(..., description="Items per page")
+
+
+# Session Management Response Models
+class SessionResponse(BaseModel):
+    """Response model for chat session operations."""
+    
+    id: str = Field(..., description="Session ID")
+    project_id: str = Field(..., description="Project ID this session belongs to")
+    user_id: str = Field(..., description="ID of the session owner")
+    title: str = Field(..., description="Session title")
+    created_at: str = Field(..., description="Creation timestamp")
+    updated_at: str = Field(..., description="Last update timestamp")
+    message_count: int = Field(..., description="Number of messages in session")
+
+
+class SessionListResponse(BaseModel):
+    """Response model for session listing."""
+    
+    sessions: List[SessionResponse] = Field(..., description="List of sessions")
+    total: int = Field(..., description="Total number of sessions")
+    page: int = Field(..., description="Current page number")
+    per_page: int = Field(..., description="Items per page")
+
+
+# Message Response Models
+class MessageResponse(BaseModel):
+    """Response model for message operations."""
+    
+    id: str = Field(..., description="Message ID")
+    session_id: str = Field(..., description="Session ID this message belongs to")
+    user_id: str = Field(..., description="ID of the message sender")
+    content: str = Field(..., description="Message content")
+    message_type: str = Field(..., description="Type of message")
+    created_at: str = Field(..., description="Creation timestamp")
+    message_metadata: Dict[str, Any] = Field(..., description="Additional message metadata")
+
+
+class MessageListResponse(BaseModel):
+    """Response model for message listing."""
+    
+    messages: List[MessageResponse] = Field(..., description="List of messages")
+    total: int = Field(..., description="Total number of messages")
+    session_id: str = Field(..., description="Session ID")
+    page: int = Field(..., description="Current page number")
+    per_page: int = Field(..., description="Items per page")
+
+
+# Analysis Response Models
+class LinguisticsAnalysisResponse(BaseModel):
+    """Response model for linguistics analysis."""
+    
+    analysis_id: str = Field(..., description="Analysis ID")
+    text: str = Field(..., description="Analyzed text")
+    language: str = Field(..., description="Language code")
+    analysis_type: str = Field(..., description="Type of analysis performed")
+    results: Dict[str, Any] = Field(..., description="Analysis results")
+    confidence: float = Field(..., description="Confidence score", ge=0.0, le=1.0)
+    processing_time_ms: int = Field(..., description="Processing time in milliseconds")
+    created_at: str = Field(..., description="Creation timestamp")
+
+
+class GrammarValidationResponse(BaseModel):
+    """Response model for grammar validation."""
+    
+    validation_id: str = Field(..., description="Validation ID")
+    grammar_rules: str = Field(..., description="EBNF grammar rules")
+    test_input: str = Field(..., description="Input tested against grammar")
+    is_valid: bool = Field(..., description="Whether input is valid according to grammar")
+    errors: List[str] = Field(..., description="List of validation errors")
+    warnings: List[str] = Field(..., description="List of validation warnings")
+    parse_tree: Optional[Dict[str, Any]] = Field(None, description="Parse tree if valid")
+    validation_time_ms: int = Field(..., description="Validation time in milliseconds")
+    created_at: str = Field(..., description="Creation timestamp")
+
+
+# Knowledge Management Response Models
+class KnowledgeIngestResponse(BaseModel):
+    """Response model for knowledge ingestion."""
+    
+    ingestion_id: str = Field(..., description="Ingestion process ID")
+    source_type: str = Field(..., description="Type of source")
+    source_url: Optional[str] = Field(None, description="URL of the source")
+    status: str = Field(..., description="Ingestion status")
+    estimated_completion_time: str = Field(..., description="Estimated completion time")
+    created_at: str = Field(..., description="Creation timestamp")
+
+
+class KnowledgeEntryResponse(BaseModel):
+    """Response model for knowledge entry."""
+    
+    id: str = Field(..., description="Knowledge entry ID")
+    title: str = Field(..., description="Entry title")
+    content: str = Field(..., description="Entry content")
+    source_type: str = Field(..., description="Type of source")
+    source_url: Optional[str] = Field(None, description="URL of the source")
+    content_metadata: Dict[str, Any] = Field(..., description="Content metadata")
+    embedding_vector: List[float] = Field(..., description="Embedding vector")
+    created_at: str = Field(..., description="Creation timestamp")
+    updated_at: str = Field(..., description="Last update timestamp")
+
+
+class KnowledgeSearchResponse(BaseModel):
+    """Response model for knowledge search."""
+    
+    query: str = Field(..., description="Search query")
+    results: List[KnowledgeEntryResponse] = Field(..., description="Search results")
+    total_results: int = Field(..., description="Total number of results")
+    search_time_ms: int = Field(..., description="Search time in milliseconds")
+    search_type: str = Field(..., description="Type of search performed")
+    filters_applied: Dict[str, Any] = Field(..., description="Filters applied to search")
+    created_at: str = Field(..., description="Creation timestamp")
+
+
+# Authentication Response Models
+class UserRegistrationResponse(BaseModel):
+    """Response model for user registration."""
+    
+    id: str = Field(..., description="User ID")
+    username: str = Field(..., description="Username")
+    email: str = Field(..., description="User email address")
+    full_name: str = Field(..., description="User full name")
+    created_at: str = Field(..., description="Registration timestamp")
+
+
+class UserLoginResponse(BaseModel):
+    """Response model for user login."""
+    
+    access_token: str = Field(..., description="JWT access token")
+    token_type: str = Field(default="bearer", description="Token type")
+    expires_in: int = Field(..., description="Token expiration time in seconds")
+    user: UserRegistrationResponse = Field(..., description="User information")
+
+
+class UserProfileResponse(BaseModel):
+    """Response model for user profile."""
+    
+    id: str = Field(..., description="User ID")
+    email: str = Field(..., description="User email address")
+    full_name: str = Field(..., description="User full name")
+    created_at: str = Field(..., description="Registration timestamp")
+    updated_at: str = Field(..., description="Last update timestamp")
+
+
+class TokenRefreshResponse(BaseModel):
+    """Response model for token refresh."""
+    
+    access_token: str = Field(..., description="New JWT access token")
+    token_type: str = Field(default="bearer", description="Token type")
+    expires_in: int = Field(..., description="Token expiration time in seconds")
+

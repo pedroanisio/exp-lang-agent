@@ -349,3 +349,96 @@ class UserManagementRequest(BaseModel):
     action: str = Field(..., description="Management action")
     parameters: Optional[Dict[str, Any]] = Field(None, description="Action parameters")
 
+
+
+
+# Project Management Request Models
+class ProjectCreateRequest(BaseModel):
+    """Request model for creating a new project."""
+    
+    name: str = Field(..., description="Project name", min_length=1, max_length=100)
+    description: Optional[str] = Field(None, description="Project description", max_length=500)
+
+
+class ProjectUpdateRequest(BaseModel):
+    """Request model for updating a project."""
+    
+    name: Optional[str] = Field(None, description="Updated project name", min_length=1, max_length=100)
+    description: Optional[str] = Field(None, description="Updated project description", max_length=500)
+
+
+# Session Management Request Models
+class SessionCreateRequest(BaseModel):
+    """Request model for creating a new chat session."""
+    
+    project_id: str = Field(..., description="ID of the project this session belongs to")
+    title: Optional[str] = Field(None, description="Session title", max_length=200)
+
+
+class SessionUpdateRequest(BaseModel):
+    """Request model for updating a chat session."""
+    
+    title: Optional[str] = Field(None, description="Updated session title", max_length=200)
+
+
+# Message Request Models
+class MessageSendRequest(BaseModel):
+    """Request model for sending a message in a chat session."""
+    
+    session_id: str = Field(..., description="ID of the session to send message to")
+    content: str = Field(..., description="Message content", min_length=1, max_length=10000)
+    message_type: Optional[str] = Field(default="user", description="Type of message")
+
+
+# Analysis Request Models
+class LinguisticsAnalysisRequest(BaseModel):
+    """Request model for linguistics analysis."""
+    
+    text: str = Field(..., description="Text to analyze", min_length=1, max_length=10000)
+    language: Optional[str] = Field(default="en", description="Language code")
+    analysis_type: str = Field(default="comprehensive", description="Type of analysis to perform")
+
+
+class GrammarValidationRequest(BaseModel):
+    """Request model for EBNF grammar validation."""
+    
+    grammar_rules: str = Field(..., description="EBNF grammar rules", min_length=1)
+    test_input: str = Field(..., description="Input to test against grammar", min_length=1)
+
+
+# Knowledge Management Request Models
+class KnowledgeIngestRequest(BaseModel):
+    """Request model for knowledge ingestion."""
+    
+    source_type: str = Field(..., description="Type of source (url, pdf, text, file)")
+    source_url: Optional[str] = Field(None, description="URL of the source")
+    content: Optional[str] = Field(None, description="Direct text content")
+    title: Optional[str] = Field(None, description="Title for the knowledge entry")
+
+
+class KnowledgeSearchRequest(BaseModel):
+    """Request model for knowledge search."""
+    
+    query: str = Field(..., description="Search query", min_length=1, max_length=500)
+    search_type: Optional[str] = Field(default="hybrid", description="Type of search (semantic, keyword, hybrid)")
+    filters: Optional[Dict[str, Any]] = Field(default_factory=dict, description="Search filters")
+    limit: Optional[int] = Field(default=10, description="Maximum number of results", ge=1, le=100)
+
+
+
+# Authentication Request Models
+class UserRegistrationRequest(BaseModel):
+    """Request model for user registration."""
+    
+    username: str = Field(..., description="Username", min_length=3, max_length=50)
+    email: str = Field(..., description="User email address")
+    password: str = Field(..., description="User password", min_length=8)
+    full_name: str = Field(..., description="User full name", min_length=1, max_length=100)
+
+
+class UserLoginRequest(BaseModel):
+    """Request model for user login."""
+    
+    email: str = Field(..., description="User email address")
+    password: str = Field(..., description="User password")
+

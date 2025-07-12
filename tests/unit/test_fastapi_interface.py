@@ -24,7 +24,7 @@ Rule Compliance:
 import pytest
 import asyncio
 from typing import Dict, Any, List
-from httpx import AsyncClient
+from httpx import AsyncClient, ASGITransport
 from fastapi import status
 from fastapi.testclient import TestClient
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
@@ -120,7 +120,10 @@ class TestFastAPIInterface:
     @pytest.fixture
     async def test_client(self, test_app):
         """Create test HTTP client."""
-        async with AsyncClient(app=test_app, base_url="http://test") as client:
+        async with AsyncClient(
+            transport=ASGITransport(app=test_app), 
+            base_url="http://test"
+        ) as client:
             yield client
 
     @pytest.fixture
@@ -600,7 +603,7 @@ class TestFastAPIInterface:
     async def test_health_check_endpoint(self, test_client: AsyncClient):
         """Test health check endpoint."""
         # This test will FAIL until implementation (TDD RED phase)
-        response = await test_client.get("/api/v1/health")
+        response = await test_client.get("/api/v1/health/")
 
         assert response.status_code == status.HTTP_200_OK
         response_data = response.json()

@@ -35,8 +35,8 @@ from ...models.responses import (
     TokenRefreshResponse,
 )
 
-# Initialize router with prefix and tags
-router = APIRouter(prefix="/auth", tags=["authentication"])
+# Initialize router with tags (prefix added in main.py)
+router = APIRouter(tags=["authentication"])
 security = HTTPBearer()
 
 

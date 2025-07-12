@@ -42,7 +42,9 @@ async def get_database_session() -> AsyncGenerator[AsyncSession, None]:
     This dependency ensures proper database session management
     with automatic cleanup and error handling.
     """
-    db_manager = DatabaseManager()
+    from ..config import Settings
+    settings = Settings()
+    db_manager = DatabaseManager(settings.database.url)
 
     try:
         # Initialize database manager if not already done

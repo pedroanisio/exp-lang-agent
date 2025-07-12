@@ -38,16 +38,17 @@ from typing import Dict, Any, Optional
 import uvicorn
 
 # Import API routes
-from .routes.auth import router as auth_router
-# from .routes.projects import router as projects_router  # TODO: Create in GREEN phase
-# from .routes.sessions import router as sessions_router  # TODO: Create in GREEN phase
-# from .routes.messages import router as messages_router  # TODO: Create in GREEN phase
-# from .routes.analysis import router as analysis_router  # TODO: Create in GREEN phase
-# from .routes.knowledge import router as knowledge_router  # TODO: Create in GREEN phase
+from .routes.auth_minimal import router as auth_router
+from .routes.projects import router as projects_router
+from .routes.sessions import router as sessions_router
+from .routes.messages import router as messages_router
+from .routes.analysis import router as analysis_router
+from .routes.knowledge import router as knowledge_router
 from .routes.health import router as health_router
 from .routes.users import router as users_router
 from .routes.admin import router as admin_router
 from .routes.linguistics import router as linguistics_router
+from .routes.cors_options import router as cors_options_router
 
 # Import middleware
 from .middleware.rate_limiting import RateLimitMiddleware
@@ -172,10 +173,7 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
         lifespan=lifespan,
     )
 
-    # Add security middleware
-    app.add_middleware(SecurityHeadersMiddleware)
-
-    # Add CORS middleware
+    # Add CORS middleware first (must be before security middleware)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],  # Configure appropriately for production
@@ -184,8 +182,11 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
         allow_headers=["*"],
     )
 
+    # Add security middleware
+    app.add_middleware(SecurityHeadersMiddleware)
+
     # Add trusted host middleware for production security
-    if settings.environment == "production":
+    if settings.app.env == "production":
         app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.allowed_hosts)
 
     # Add rate limiting middleware
@@ -197,47 +198,49 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
     # Include API routers
     app.include_router(auth_router, prefix="/api/v1/auth", tags=["Authentication"])
 
-    # TODO: Add in GREEN phase
-    # app.include_router(
-    #     projects_router,
-    #     prefix="/api/v1/projects",
-    #     tags=["Projects"],
-    #     dependencies=[Depends(get_current_user)],
-    # )
+    app.include_router(
+        projects_router,
+        prefix="/api/v1/projects",
+        tags=["Projects"],
+        dependencies=[Depends(get_current_user)],
+    )
 
-    # app.include_router(
-    #     sessions_router,
-    #     prefix="/api/v1/sessions",
-    #     tags=["Chat Sessions"],
-    #     dependencies=[Depends(get_current_user)],
-    # )
+    app.include_router(
+        sessions_router,
+        prefix="/api/v1/sessions",
+        tags=["Chat Sessions"],
+        dependencies=[Depends(get_current_user)],
+    )
 
-    # app.include_router(
-    #     messages_router,
-    #     prefix="/api/v1/messages",
-    #     tags=["Messages"],
-    #     dependencies=[Depends(get_current_user)],
-    # )
+    app.include_router(
+        messages_router,
+        prefix="/api/v1/messages",
+        tags=["Messages"],
+        dependencies=[Depends(get_current_user)],
+    )
 
-    # app.include_router(
-    #     analysis_router,
-    #     prefix="/api/v1",
-    #     tags=["Linguistics Analysis"],
-    #     dependencies=[Depends(get_current_user)],
-    # )
+    app.include_router(
+        analysis_router,
+        prefix="/api/v1",
+        tags=["Linguistics Analysis"],
+        dependencies=[Depends(get_current_user)],
+    )
 
-    # app.include_router(
-    #     knowledge_router,
-    #     prefix="/api/v1/knowledge",
-    #     tags=["Knowledge Management"],
-    #     dependencies=[Depends(get_current_user)],
-    # )
+    app.include_router(
+        knowledge_router,
+        prefix="/api/v1/knowledge",
+        tags=["Knowledge Management"],
+        dependencies=[Depends(get_current_user)],
+    )
 
     # Add existing routers
     app.include_router(users_router, prefix="/api/v1/users", tags=["User Management"])
     app.include_router(admin_router, prefix="/api/v1/admin", tags=["Administration"])
     app.include_router(linguistics_router, prefix="/api/v1/linguistics", tags=["Linguistics Analysis"])
     app.include_router(health_router, prefix="/api/v1", tags=["Health & Monitoring"])
+    
+    # Add CORS OPTIONS handlers
+    app.include_router(cors_options_router, prefix="/api/v1", tags=["CORS"])
 
     # Global exception handlers
     @app.exception_handler(HTTPException)
