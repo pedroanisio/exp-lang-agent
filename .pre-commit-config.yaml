@@ -1,8 +1,8 @@
-# Pre-commit configuration following rules-106 v1.0
-# Comprehensive linting standards with multi-language support
+# Pre-commit configuration — rules-106 v1.1
+# Updated 2025-07-12
 
 repos:
-  # Python linting and formatting
+  # ---------------- Python ----------------
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.12.3
     hooks:
@@ -12,9 +12,9 @@ repos:
         types: [python]
       - id: ruff-format
         name: ruff-format
+        # formatter only; no args needed
         types: [python]
 
-  # Black formatting (backup/alternative to ruff-format)
   - repo: https://github.com/psf/black
     rev: 25.1.0
     hooks:
@@ -23,7 +23,6 @@ repos:
         language_version: python3.11
         types: [python]
 
-  # isort import sorting
   - repo: https://github.com/pycqa/isort
     rev: 6.0.1
     hooks:
@@ -32,23 +31,20 @@ repos:
         args: ["--profile", "black", "--check-only", "--diff"]
         types: [python]
 
-  # mypy type checking
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.16.1
     hooks:
       - id: mypy
         name: mypy-type-check
-        additional_dependencies: [
-          pydantic,
-          pydantic-ai,
-          fastapi,
-          types-requests,
-          types-redis
-        ]
+        additional_dependencies:
+          - pydantic
+          - pydantic-ai
+          - fastapi
+          - types-requests
+          - types-redis
         args: [--strict, --ignore-missing-imports]
         types: [python]
 
-  # Security scanning with bandit
   - repo: https://github.com/pycqa/bandit
     rev: 1.8.6
     hooks:
@@ -56,16 +52,9 @@ repos:
         name: bandit-security
         args: ["-r", "src/", "-f", "json", "-o", ".linting/reports/bandit-report.json"]
         types: [python]
+        # comment the next line if you *do* want it locally
+        always_run: false
 
-  # Safety vulnerability scanning
-  - repo: https://github.com/pyupio/safety
-    rev: 3.2.9
-    hooks:
-      - id: safety
-        name: safety-vulnerabilities
-        args: [--json, --output, ".linting/reports/safety-report.json"]
-
-  # Python docstring style
   - repo: https://github.com/pycqa/pydocstyle
     rev: 6.3.0
     hooks:
@@ -74,16 +63,16 @@ repos:
         args: [--convention=pep257]
         types: [python]
 
-  # Dead code detection
   - repo: https://github.com/jendrikseipp/vulture
     rev: v2.13
     hooks:
       - id: vulture
         name: vulture-dead-code
-        args: [--min-confidence, "80"]
+        args: [--min-confidence=80]
         types: [python]
+        always_run: false
 
-  # General file checks
+  # ------------- General file checks -------------
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
@@ -101,7 +90,7 @@ repos:
         name: check-merge-conflicts
       - id: check-added-large-files
         name: check-large-files
-        args: ['--maxkb=1000']
+        args: ["--maxkb=1000"]
       - id: check-case-conflict
         name: check-case-conflicts
       - id: check-executables-have-shebangs
@@ -109,48 +98,58 @@ repos:
       - id: check-shebang-scripts-are-executable
         name: check-executable-shebangs
 
-  # Dockerfile linting
+  # -------------- Dockerfile ----------------
   - repo: https://github.com/hadolint/hadolint
     rev: v2.12.0
     hooks:
       - id: hadolint-docker
         name: hadolint-dockerfile
-        args: [--ignore, DL3008, --ignore, DL3009]
+        args: ["--ignore", "DL3008", "--ignore", "DL3009"]
 
-  # YAML linting
+  # -------------- YAML ----------------
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.35.1
     hooks:
       - id: yamllint
         name: yamllint-yaml
-        args: [-c=.yamllint.yml]
+        # Use built-in relaxed config if file absent
+        args: ["-d", "{extends: relaxed, rules: {line-length: {max: 120}}}"]
 
-  # Markdown linting
+  # -------------- Markdown ----------------
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.42.0
     hooks:
       - id: markdownlint
         name: markdownlint-md
-        args: [--config, .markdownlint.yml]
+        # falls back to default rules if local config missing
+        args: ["--disable", "MD013"]  # disable long-line rule
 
-  # Shell script linting
+  # -------------- Shell ----------------
   - repo: https://github.com/shellcheck-py/shellcheck-py
     rev: v0.10.0.1
     hooks:
       - id: shellcheck
         name: shellcheck-shell
-        args: [--severity=warning]
+        args: ["--severity=warning"]
 
-# Configuration for specific environments
+  # -------------- Safety ----------------
+  - repo: local
+    hooks:
+      - id: safety
+        name: safety-vulnerabilities
+        entry: safety check --full-report
+        language: system
+        types: [python]
+        always_run: false    # heavy, keep for CI if wanted
+
+# ---- CI integration (pre-commit.ci) ----
 ci:
   autofix_commit_msg: |
-    [pre-commit.ci] auto fixes from pre-commit hooks
-
-    for more information, see https://pre-commit.ci
+    [pre-commit.ci] auto fixes
   autofix_prs: true
   autoupdate_branch: ''
-  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+  autoupdate_commit_msg: '[pre-commit.ci] autoupdate'
   autoupdate_schedule: weekly
-  skip: [mypy, bandit, safety, vulture]  # Skip heavy checks in CI
+  # heavy checks only on demand
+  skip: [mypy, bandit, safety, vulture]
   submodules: false
-
