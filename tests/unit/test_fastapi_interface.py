@@ -38,28 +38,28 @@ from linguistics_agent.models.database import (
     Base,
     User,
     Project,
-    ChatSession,
+    Session,
     Message,
     KnowledgeEntry,
 )
 from linguistics_agent.models.requests import (
     LinguisticsQuery,
-    UserRegistration,
-    UserLogin,
-    ProjectCreate,
-    SessionCreate,
-    MessageCreate,
+    UserRegistrationRequest,
+    UserLoginRequest,
+    ProjectCreateRequest,
+    SessionCreateRequest,
+    MessageCreateRequest,
     KnowledgeIngestionRequest,
 )
 from linguistics_agent.models.responses import (
     LinguisticsResponse,
-    UserResponse,
-    TokenResponse,
+    UserRegistrationResponse,
+    UserLoginResponse,
     ProjectResponse,
     SessionResponse,
     MessageResponse,
     KnowledgeEntryResponse,
-    ErrorResponse,
+    HealthCheckResponse,
 )
 from linguistics_agent.database import DatabaseManager
 

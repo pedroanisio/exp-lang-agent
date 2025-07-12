@@ -39,12 +39,15 @@ import uvicorn
 
 # Import API routes
 from .routes.auth import router as auth_router
-from .routes.projects import router as projects_router
-from .routes.sessions import router as sessions_router
-from .routes.messages import router as messages_router
-from .routes.analysis import router as analysis_router
-from .routes.knowledge import router as knowledge_router
+# from .routes.projects import router as projects_router  # TODO: Create in GREEN phase
+# from .routes.sessions import router as sessions_router  # TODO: Create in GREEN phase
+# from .routes.messages import router as messages_router  # TODO: Create in GREEN phase
+# from .routes.analysis import router as analysis_router  # TODO: Create in GREEN phase
+# from .routes.knowledge import router as knowledge_router  # TODO: Create in GREEN phase
 from .routes.health import router as health_router
+from .routes.users import router as users_router
+from .routes.admin import router as admin_router
+from .routes.linguistics import router as linguistics_router
 
 # Import middleware
 from .middleware.rate_limiting import RateLimitMiddleware
@@ -194,41 +197,46 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
     # Include API routers
     app.include_router(auth_router, prefix="/api/v1/auth", tags=["Authentication"])
 
-    app.include_router(
-        projects_router,
-        prefix="/api/v1/projects",
-        tags=["Projects"],
-        dependencies=[Depends(get_current_user)],
-    )
+    # TODO: Add in GREEN phase
+    # app.include_router(
+    #     projects_router,
+    #     prefix="/api/v1/projects",
+    #     tags=["Projects"],
+    #     dependencies=[Depends(get_current_user)],
+    # )
 
-    app.include_router(
-        sessions_router,
-        prefix="/api/v1/sessions",
-        tags=["Chat Sessions"],
-        dependencies=[Depends(get_current_user)],
-    )
+    # app.include_router(
+    #     sessions_router,
+    #     prefix="/api/v1/sessions",
+    #     tags=["Chat Sessions"],
+    #     dependencies=[Depends(get_current_user)],
+    # )
 
-    app.include_router(
-        messages_router,
-        prefix="/api/v1/messages",
-        tags=["Messages"],
-        dependencies=[Depends(get_current_user)],
-    )
+    # app.include_router(
+    #     messages_router,
+    #     prefix="/api/v1/messages",
+    #     tags=["Messages"],
+    #     dependencies=[Depends(get_current_user)],
+    # )
 
-    app.include_router(
-        analysis_router,
-        prefix="/api/v1",
-        tags=["Linguistics Analysis"],
-        dependencies=[Depends(get_current_user)],
-    )
+    # app.include_router(
+    #     analysis_router,
+    #     prefix="/api/v1",
+    #     tags=["Linguistics Analysis"],
+    #     dependencies=[Depends(get_current_user)],
+    # )
 
-    app.include_router(
-        knowledge_router,
-        prefix="/api/v1/knowledge",
-        tags=["Knowledge Management"],
-        dependencies=[Depends(get_current_user)],
-    )
+    # app.include_router(
+    #     knowledge_router,
+    #     prefix="/api/v1/knowledge",
+    #     tags=["Knowledge Management"],
+    #     dependencies=[Depends(get_current_user)],
+    # )
 
+    # Add existing routers
+    app.include_router(users_router, prefix="/api/v1/users", tags=["User Management"])
+    app.include_router(admin_router, prefix="/api/v1/admin", tags=["Administration"])
+    app.include_router(linguistics_router, prefix="/api/v1/linguistics", tags=["Linguistics Analysis"])
     app.include_router(health_router, prefix="/api/v1", tags=["Health & Monitoring"])
 
     # Global exception handlers

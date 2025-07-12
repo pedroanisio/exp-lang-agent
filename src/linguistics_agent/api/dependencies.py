@@ -311,3 +311,8 @@ __all__ = [
     "get_pagination_params",
     "DatabaseTransactionManager",
 ]
+
+
+# Alias for backward compatibility with routes
+get_db_session = get_database_session
+

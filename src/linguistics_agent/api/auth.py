@@ -71,10 +71,10 @@ class AuthManager:
     def __init__(self, settings: Optional[Settings] = None):
         """Initialize authentication manager with settings."""
         self.settings = settings or Settings()
-        self.secret_key = self.settings.jwt_secret_key
-        self.algorithm = self.settings.jwt_algorithm
-        self.access_token_expire_minutes = self.settings.jwt_access_token_expire_minutes
-        self.refresh_token_expire_days = self.settings.jwt_refresh_token_expire_days
+        self.secret_key = self.settings.security.jwt_secret_key
+        self.algorithm = self.settings.security.jwt_algorithm
+        self.access_token_expire_minutes = self.settings.security.jwt_expiration_hours * 60  # Convert hours to minutes
+        self.refresh_token_expire_days = 7  # Default refresh token expiry
 
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
         """

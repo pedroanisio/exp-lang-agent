@@ -21,7 +21,7 @@ from ..auth import get_current_user
 from ..dependencies import get_db_session
 from ...agent import LinguisticsAgent
 from ...database import DatabaseManager
-from ...models.database import User, Project, ChatSession, Message
+from ...models.database import User, Project, Session, Message
 from ...models.requests import (
     TextAnalysisRequest,
     EBNFValidationRequest,
