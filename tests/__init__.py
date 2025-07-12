@@ -9,4 +9,3 @@ Purpose: Test package initialization for AI Linguistics Agent
 
 Rule Compliance: rules-101 v1.1+, rules-102 v1.2+, rules-103 v1.2+
 """
-

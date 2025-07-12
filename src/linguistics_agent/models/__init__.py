@@ -13,4 +13,3 @@ from .requests import LinguisticsQuery
 from .responses import LinguisticsResponse
 
 __all__ = ["LinguisticsQuery", "LinguisticsResponse"]
-
