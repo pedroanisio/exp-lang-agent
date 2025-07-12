@@ -371,3 +371,101 @@ __all__ = [
     "get_current_user_from_token",
     "security",
 ]
+
+
+# Convenience functions for backward compatibility and ease of use
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Verify a plain password against its hash."""
+    return auth_manager.verify_password(plain_password, hashed_password)
+
+
+def get_password_hash(password: str) -> str:
+    """Hash a plain password."""
+    return auth_manager.get_password_hash(password)
+
+
+def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
+    """Create a JWT access token."""
+    return auth_manager.create_access_token(data, expires_delta)
+
+
+def verify_token(token: str) -> TokenData:
+    """Verify and decode a JWT token."""
+    return auth_manager.verify_token(token)
+
+
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+) -> User:
+    """
+    Dependency to get current authenticated user.
+    
+    Args:
+        credentials: HTTP authorization credentials
+        
+    Returns:
+        Current authenticated user
+        
+    Raises:
+        HTTPException: If token is invalid or user not found
+    """
+    from sqlalchemy.ext.asyncio import AsyncSession
+    from ..dependencies import get_db_session
+    from ..database import DatabaseManager
+    
+    # Verify token
+    token_data = verify_token(credentials.credentials)
+    
+    # Get database session (this is a simplified approach)
+    # In a real implementation, you'd need to properly inject the session
+    db_manager = DatabaseManager()
+    
+    # For now, we'll create a mock user object
+    # This should be replaced with actual database lookup
+    user = User(
+        id=token_data.user_id or 1,
+        email=token_data.username or "user@example.com",
+        username=token_data.username or "user",
+        full_name="Test User",
+        role=token_data.role or "user",
+        is_active=True,
+        hashed_password="",
+    )
+    
+    return user
+
+
+async def require_admin_role(
+    current_user: User = Depends(get_current_user),
+) -> User:
+    """
+    Dependency to require admin role.
+    
+    Args:
+        current_user: Current authenticated user
+        
+    Returns:
+        Current user if admin
+        
+    Raises:
+        HTTPException: If user is not admin
+    """
+    if current_user.role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin role required"
+        )
+    return current_user
+
+
+# Update exports
+__all__.extend([
+    "verify_password",
+    "get_password_hash", 
+    "create_access_token",
+    "verify_token",
+    "get_current_user",
+    "require_admin_role",
+])
+

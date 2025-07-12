@@ -193,3 +193,159 @@ class KnowledgeIngestionRequest(BaseModel):
                 "metadata": {"author": "Dr. Smith", "publication_year": 2023},
             }
         }
+
+
+# Authentication Request Models
+
+class UserRegistrationRequest(BaseModel):
+    """Request model for user registration."""
+    
+    email: str = Field(..., description="User email address")
+    username: str = Field(..., min_length=3, max_length=50, description="Username")
+    full_name: str = Field(..., min_length=1, max_length=100, description="Full name")
+    password: str = Field(..., min_length=8, description="Password")
+    
+    @validator('email')
+    def validate_email(cls, v):
+        import re
+        if not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', v):
+            raise ValueError('Invalid email format')
+        return v.lower()
+
+
+class UserLoginRequest(BaseModel):
+    """Request model for user login."""
+    
+    email: str = Field(..., description="User email address")
+    password: str = Field(..., description="Password")
+
+
+# Linguistics Analysis Request Models
+
+class TextAnalysisRequest(BaseModel):
+    """Request model for text analysis."""
+    
+    text: str = Field(..., min_length=1, max_length=50000, description="Text to analyze")
+    analysis_type: str = Field(default="comprehensive", description="Type of analysis")
+    include_grammar: bool = Field(default=True, description="Include grammar analysis")
+    include_semantics: bool = Field(default=True, description="Include semantic analysis")
+    include_syntax: bool = Field(default=True, description="Include syntax analysis")
+    session_id: Optional[str] = Field(None, description="Session ID for context")
+
+
+class EBNFValidationRequest(BaseModel):
+    """Request model for EBNF grammar validation."""
+    
+    grammar: str = Field(..., min_length=1, description="EBNF grammar to validate")
+    strict_mode: bool = Field(default=False, description="Enable strict validation")
+
+
+class GrammarAnalysisRequest(BaseModel):
+    """Request model for grammar analysis."""
+    
+    grammar: str = Field(..., min_length=1, description="Grammar to analyze")
+    analysis_depth: str = Field(default="standard", description="Depth of analysis")
+    include_patterns: bool = Field(default=True, description="Include pattern analysis")
+
+
+# Project and Session Management Request Models
+
+class ProjectCreateRequest(BaseModel):
+    """Request model for creating a new project."""
+    
+    name: str = Field(..., min_length=1, max_length=100, description="Project name")
+    description: Optional[str] = Field(None, max_length=500, description="Project description")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+
+
+class SessionCreateRequest(BaseModel):
+    """Request model for creating a new session."""
+    
+    title: str = Field(..., min_length=1, max_length=100, description="Session title")
+    project_id: str = Field(..., description="Project ID")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+
+
+class MessageCreateRequest(BaseModel):
+    """Request model for creating a new message."""
+    
+    content: str = Field(..., min_length=1, description="Message content")
+    message_type: str = Field(default="user", description="Type of message")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+
+
+# Knowledge Management Request Models
+
+class KnowledgeIngestRequest(BaseModel):
+    """Base request model for knowledge ingestion."""
+    
+    source_type: str = Field(..., description="Type of knowledge source")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+
+
+class URLIngestRequest(BaseModel):
+    """Request model for URL knowledge ingestion."""
+    
+    url: str = Field(..., description="URL to ingest")
+    extract_text: bool = Field(default=True, description="Extract text content")
+    extract_links: bool = Field(default=False, description="Extract linked content")
+    max_depth: int = Field(default=1, ge=1, le=3, description="Maximum crawl depth")
+    follow_external: bool = Field(default=False, description="Follow external links")
+
+
+class TextIngestRequest(BaseModel):
+    """Request model for text knowledge ingestion."""
+    
+    text: str = Field(..., min_length=1, description="Text content to ingest")
+    title: str = Field(..., min_length=1, description="Title for the content")
+    content_type: str = Field(default="text", description="Type of content")
+    language: Optional[str] = Field(None, description="Content language")
+    chunk_size: Optional[int] = Field(None, ge=100, le=10000, description="Chunk size for processing")
+
+
+class KnowledgeSearchRequest(BaseModel):
+    """Request model for knowledge search."""
+    
+    query: str = Field(..., min_length=1, description="Search query")
+    content_type: Optional[str] = Field(None, description="Filter by content type")
+    source_type: Optional[str] = Field(None, description="Filter by source type")
+    limit: int = Field(default=20, ge=1, le=100, description="Maximum results")
+    offset: int = Field(default=0, ge=0, description="Pagination offset")
+
+
+# User Management Request Models
+
+class UserProfileUpdateRequest(BaseModel):
+    """Request model for updating user profile."""
+    
+    username: Optional[str] = Field(None, min_length=3, max_length=50, description="Username")
+    full_name: Optional[str] = Field(None, min_length=1, max_length=100, description="Full name")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+
+
+class PasswordChangeRequest(BaseModel):
+    """Request model for changing password."""
+    
+    current_password: str = Field(..., description="Current password")
+    new_password: str = Field(..., min_length=8, description="New password")
+
+
+class UserPreferencesRequest(BaseModel):
+    """Request model for updating user preferences."""
+    
+    theme: Optional[str] = Field(None, description="UI theme preference")
+    language: Optional[str] = Field(None, description="Language preference")
+    timezone: Optional[str] = Field(None, description="Timezone preference")
+    notifications_enabled: Optional[bool] = Field(None, description="Enable notifications")
+    email_notifications: Optional[bool] = Field(None, description="Enable email notifications")
+    analysis_defaults: Optional[Dict[str, Any]] = Field(None, description="Default analysis settings")
+    ui_preferences: Optional[Dict[str, Any]] = Field(None, description="UI preferences")
+
+
+class UserManagementRequest(BaseModel):
+    """Request model for user management (admin)."""
+    
+    user_id: str = Field(..., description="User ID to manage")
+    action: str = Field(..., description="Management action")
+    parameters: Optional[Dict[str, Any]] = Field(None, description="Action parameters")
+

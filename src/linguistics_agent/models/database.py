@@ -98,6 +98,9 @@ class User(Base, TimestampMixin):
     )
     login_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
+    # User metadata and preferences
+    user_metadata: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
+
     # Relationships
     projects: Mapped[List["Project"]] = relationship(
         "Project", back_populates="user", cascade="all, delete-orphan"
@@ -228,7 +231,7 @@ class Message(Base, TimestampMixin):
     )
 
     # Message metadata
-    metadata: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
+    message_metadata: Mapped[Optional[Dict[str, Any]]] = mapped_column(JSON, nullable=True)
 
     # AI response metadata
     model_used: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
@@ -281,7 +284,7 @@ class KnowledgeEntry(Base, TimestampMixin):
     language: Mapped[str] = mapped_column(String(10), default="en", nullable=False)
 
     # Content metadata
-    metadata: Mapped[Dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    content_metadata: Mapped[Dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
 
     # Processing status
     processed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)

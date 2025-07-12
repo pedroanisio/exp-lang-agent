@@ -251,10 +251,10 @@ class TestDatabaseModels:
         knowledge_entry = KnowledgeEntry(
             title="EBNF Grammar Rules",
             content="Extended Backus-Naur Form (EBNF) is a notation...",
-            source_type="article",
+            source_type="text",
             source_url="https://example.com/ebnf-guide",
             tags=["ebnf", "grammar", "parsing"],
-            metadata={"author": "John Doe", "year": 2023},
+            content_metadata={"author": "John Doe", "year": 2023},
         )
 
         db_session.add(knowledge_entry)
@@ -263,9 +263,9 @@ class TestDatabaseModels:
 
         assert knowledge_entry.id is not None
         assert knowledge_entry.title == "EBNF Grammar Rules"
-        assert knowledge_entry.source_type == "article"
+        assert knowledge_entry.source_type == "text"
         assert "ebnf" in knowledge_entry.tags
-        assert knowledge_entry.metadata["author"] == "John Doe"
+        assert knowledge_entry.content_metadata["author"] == "John Doe"
 
     @pytest.mark.asyncio
     async def test_user_projects_relationship(self, db_session: AsyncSession):
@@ -509,9 +509,9 @@ class TestDatabaseModels:
         knowledge_entry = KnowledgeEntry(
             title="JSON Test Entry",
             content="Content with JSON metadata",
-            source_type="test",
+            source_type="file",
             tags=["json", "test"],
-            metadata={
+            content_metadata={
                 "complex_data": {
                     "nested": {"value": 123},
                     "array": [1, 2, 3],
@@ -526,10 +526,10 @@ class TestDatabaseModels:
         await db_session.refresh(knowledge_entry)
 
         # Verify JSON storage and retrieval
-        assert knowledge_entry.metadata["complex_data"]["nested"]["value"] == 123
-        assert knowledge_entry.metadata["complex_data"]["array"] == [1, 2, 3]
-        assert knowledge_entry.metadata["complex_data"]["boolean"] is True
-        assert knowledge_entry.metadata["simple_string"] == "test"
+        assert knowledge_entry.content_metadata["complex_data"]["nested"]["value"] == 123
+        assert knowledge_entry.content_metadata["complex_data"]["array"] == [1, 2, 3]
+        assert knowledge_entry.content_metadata["complex_data"]["boolean"] is True
+        assert knowledge_entry.content_metadata["simple_string"] == "test"
 
     @pytest.mark.asyncio
     async def test_database_performance_indexes(self, db_session: AsyncSession):

@@ -277,3 +277,289 @@ class SessionInfo(BaseModel):
 
         validate_assignment = True
         json_encoders = {datetime: lambda v: v.isoformat()}
+
+
+# Authentication Response Models
+
+class UserRegistrationResponse(BaseModel):
+    """Response model for user registration."""
+    
+    id: str = Field(..., description="User ID")
+    email: str = Field(..., description="User email")
+    username: str = Field(..., description="Username")
+    full_name: str = Field(..., description="Full name")
+    role: str = Field(..., description="User role")
+    is_active: bool = Field(..., description="Account active status")
+    created_at: datetime = Field(..., description="Account creation timestamp")
+    access_token: str = Field(..., description="JWT access token")
+    token_type: str = Field(..., description="Token type")
+
+
+class UserLoginResponse(BaseModel):
+    """Response model for user login."""
+    
+    access_token: str = Field(..., description="JWT access token")
+    token_type: str = Field(..., description="Token type")
+    user_id: str = Field(..., description="User ID")
+    email: str = Field(..., description="User email")
+    username: str = Field(..., description="Username")
+    full_name: str = Field(..., description="Full name")
+    role: str = Field(..., description="User role")
+
+
+class UserProfileResponse(BaseModel):
+    """Response model for user profile."""
+    
+    id: str = Field(..., description="User ID")
+    email: str = Field(..., description="User email")
+    username: str = Field(..., description="Username")
+    full_name: str = Field(..., description="Full name")
+    role: str = Field(..., description="User role")
+    is_active: bool = Field(..., description="Account active status")
+    created_at: datetime = Field(..., description="Account creation timestamp")
+    updated_at: datetime = Field(..., description="Last update timestamp")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+
+
+class TokenRefreshResponse(BaseModel):
+    """Response model for token refresh."""
+    
+    access_token: str = Field(..., description="New JWT access token")
+    token_type: str = Field(..., description="Token type")
+
+
+# Linguistics Analysis Response Models
+
+class TextAnalysisResponse(BaseModel):
+    """Response model for text analysis."""
+    
+    analysis: str = Field(..., description="Analysis results")
+    confidence: float = Field(..., ge=0.0, le=1.0, description="Confidence score")
+    processing_time: float = Field(..., description="Processing time in seconds")
+    analysis_type: str = Field(..., description="Type of analysis performed")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+
+
+class EBNFValidationResponse(BaseModel):
+    """Response model for EBNF validation."""
+    
+    is_valid: bool = Field(..., description="Whether grammar is valid")
+    errors: List[str] = Field(default_factory=list, description="Validation errors")
+    warnings: List[str] = Field(default_factory=list, description="Validation warnings")
+    suggestions: List[str] = Field(default_factory=list, description="Improvement suggestions")
+    processed_grammar: Optional[str] = Field(None, description="Processed grammar")
+
+
+class GrammarAnalysisResponse(BaseModel):
+    """Response model for grammar analysis."""
+    
+    structure: Dict[str, Any] = Field(..., description="Grammar structure analysis")
+    patterns: List[Dict[str, Any]] = Field(..., description="Identified patterns")
+    complexity_score: float = Field(..., ge=0.0, description="Complexity score")
+    recommendations: List[str] = Field(..., description="Optimization recommendations")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+
+
+# Project and Session Management Response Models
+
+class ProjectResponse(BaseModel):
+    """Response model for project information."""
+    
+    id: str = Field(..., description="Project ID")
+    name: str = Field(..., description="Project name")
+    description: Optional[str] = Field(None, description="Project description")
+    user_id: str = Field(..., description="Owner user ID")
+    created_at: datetime = Field(..., description="Creation timestamp")
+    updated_at: datetime = Field(..., description="Last update timestamp")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+
+
+class ProjectListResponse(BaseModel):
+    """Response model for project list."""
+    
+    projects: List[ProjectResponse] = Field(..., description="List of projects")
+
+
+class SessionResponse(BaseModel):
+    """Response model for session information."""
+    
+    id: str = Field(..., description="Session ID")
+    title: str = Field(..., description="Session title")
+    project_id: str = Field(..., description="Project ID")
+    created_at: datetime = Field(..., description="Creation timestamp")
+    updated_at: datetime = Field(..., description="Last update timestamp")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+
+
+class SessionListResponse(BaseModel):
+    """Response model for session list."""
+    
+    sessions: List[SessionResponse] = Field(..., description="List of sessions")
+
+
+class MessageResponse(BaseModel):
+    """Response model for message information."""
+    
+    id: str = Field(..., description="Message ID")
+    session_id: str = Field(..., description="Session ID")
+    content: str = Field(..., description="Message content")
+    message_type: str = Field(..., description="Message type")
+    created_at: datetime = Field(..., description="Creation timestamp")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+
+
+class MessageListResponse(BaseModel):
+    """Response model for message list."""
+    
+    messages: List[MessageResponse] = Field(..., description="List of messages")
+
+
+# Knowledge Management Response Models
+
+class KnowledgeIngestResponse(BaseModel):
+    """Response model for knowledge ingestion."""
+    
+    success: bool = Field(..., description="Whether ingestion was successful")
+    entries_created: int = Field(..., description="Number of knowledge entries created")
+    processing_time: float = Field(..., description="Processing time in seconds")
+    source_type: str = Field(..., description="Type of source ingested")
+    source_identifier: str = Field(..., description="Source identifier")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+
+
+class KnowledgeEntryResponse(BaseModel):
+    """Response model for knowledge entry."""
+    
+    id: str = Field(..., description="Knowledge entry ID")
+    title: str = Field(..., description="Entry title")
+    content: str = Field(..., description="Entry content")
+    source_type: str = Field(..., description="Source type")
+    source_url: Optional[str] = Field(None, description="Source URL")
+    content_type: str = Field(..., description="Content type")
+    created_at: datetime = Field(..., description="Creation timestamp")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+    relevance_score: Optional[float] = Field(None, description="Relevance score for search")
+
+
+class KnowledgeSearchResponse(BaseModel):
+    """Response model for knowledge search."""
+    
+    entries: List[KnowledgeEntryResponse] = Field(..., description="Search results")
+    total_count: int = Field(..., description="Total number of matching entries")
+    query: str = Field(..., description="Search query")
+    processing_time: float = Field(..., description="Search processing time")
+
+
+class KnowledgeStatsResponse(BaseModel):
+    """Response model for knowledge base statistics."""
+    
+    total_entries: int = Field(..., description="Total knowledge entries")
+    entries_by_type: Dict[str, int] = Field(..., description="Entries by content type")
+    entries_by_source: Dict[str, int] = Field(..., description="Entries by source type")
+    total_words: int = Field(..., description="Total word count")
+    languages: List[str] = Field(..., description="Languages in knowledge base")
+    recent_ingestions: int = Field(..., description="Recent ingestions count")
+    storage_size: int = Field(..., description="Storage size in bytes")
+
+
+# User Management Response Models
+
+class UserStatsResponse(BaseModel):
+    """Response model for user statistics."""
+    
+    user_id: str = Field(..., description="User ID")
+    total_projects: int = Field(..., description="Total projects")
+    total_sessions: int = Field(..., description="Total sessions")
+    total_messages: int = Field(..., description="Total messages")
+    total_analyses: int = Field(..., description="Total analyses performed")
+    account_age_days: int = Field(..., description="Account age in days")
+    last_activity: Optional[datetime] = Field(None, description="Last activity timestamp")
+    most_used_features: List[str] = Field(..., description="Most used features")
+    analysis_types_used: Dict[str, int] = Field(..., description="Analysis types usage")
+
+
+class UserPreferencesResponse(BaseModel):
+    """Response model for user preferences."""
+    
+    user_id: str = Field(..., description="User ID")
+    theme: str = Field(..., description="UI theme preference")
+    language: str = Field(..., description="Language preference")
+    timezone: str = Field(..., description="Timezone preference")
+    notifications_enabled: bool = Field(..., description="Notifications enabled")
+    email_notifications: bool = Field(..., description="Email notifications enabled")
+    analysis_defaults: Dict[str, Any] = Field(..., description="Default analysis settings")
+    ui_preferences: Dict[str, Any] = Field(..., description="UI preferences")
+
+
+class UserManagementResponse(BaseModel):
+    """Response model for user management."""
+    
+    id: str = Field(..., description="User ID")
+    email: str = Field(..., description="User email")
+    username: str = Field(..., description="Username")
+    full_name: str = Field(..., description="Full name")
+    role: str = Field(..., description="User role")
+    is_active: bool = Field(..., description="Account active status")
+    created_at: datetime = Field(..., description="Creation timestamp")
+    updated_at: datetime = Field(..., description="Last update timestamp")
+    last_login: Optional[datetime] = Field(None, description="Last login timestamp")
+    project_count: int = Field(..., description="Number of projects")
+
+
+class SystemStatsResponse(BaseModel):
+    """Response model for system statistics."""
+    
+    total_users: int = Field(..., description="Total users")
+    active_users: int = Field(..., description="Active users")
+    total_projects: int = Field(..., description="Total projects")
+    total_sessions: int = Field(..., description="Total sessions")
+    total_messages: int = Field(..., description="Total messages")
+    knowledge_entries: int = Field(..., description="Knowledge entries")
+    api_calls_today: int = Field(..., description="API calls today")
+    storage_usage: int = Field(..., description="Storage usage in bytes")
+    uptime: float = Field(..., description="System uptime in seconds")
+    health_status: str = Field(..., description="Overall health status")
+
+
+# Health Check Response Models
+
+class HealthCheckResponse(BaseModel):
+    """Response model for basic health check."""
+    
+    status: str = Field(..., description="Health status")
+    timestamp: datetime = Field(..., description="Check timestamp")
+    version: str = Field(..., description="Application version")
+    uptime: float = Field(..., description="Uptime in seconds")
+
+
+class DatabaseHealthResponse(BaseModel):
+    """Response model for database health check."""
+    
+    status: str = Field(..., description="Database status")
+    connection_pool_size: int = Field(..., description="Connection pool size")
+    active_connections: int = Field(..., description="Active connections")
+    response_time_ms: float = Field(..., description="Response time in milliseconds")
+    last_check: datetime = Field(..., description="Last check timestamp")
+    error: Optional[str] = Field(None, description="Error message if any")
+
+
+class ExternalServicesHealthResponse(BaseModel):
+    """Response model for external services health check."""
+    
+    status: str = Field(..., description="Overall external services status")
+    anthropic_api: Dict[str, Any] = Field(..., description="Anthropic API status")
+    neo4j: Dict[str, Any] = Field(..., description="Neo4j status")
+    chromadb: Dict[str, Any] = Field(..., description="ChromaDB status")
+
+
+class DetailedHealthResponse(BaseModel):
+    """Response model for detailed health check."""
+    
+    status: str = Field(..., description="Overall health status")
+    timestamp: datetime = Field(..., description="Check timestamp")
+    version: str = Field(..., description="Application version")
+    uptime: float = Field(..., description="Uptime in seconds")
+    database: DatabaseHealthResponse = Field(..., description="Database health")
+    external_services: ExternalServicesHealthResponse = Field(..., description="External services health")
+    system_metrics: Dict[str, Any] = Field(..., description="System metrics")
+
