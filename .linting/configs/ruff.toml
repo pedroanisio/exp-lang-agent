@@ -1,0 +1,211 @@
+# Ruff configuration following rules-106 v1.0
+# Ultra-fast Python linter and formatter
+
+[tool.ruff]
+# Target Python 3.11+
+target-version = "py311"
+line-length = 88
+indent-width = 4
+
+# Enable comprehensive rule sets
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # Pyflakes
+    "I",      # isort
+    "N",      # pep8-naming
+    "D",      # pydocstyle
+    "UP",     # pyupgrade
+    "YTT",    # flake8-2020
+    "ANN",    # flake8-annotations
+    "ASYNC",  # flake8-async
+    "S",      # flake8-bandit
+    "BLE",    # flake8-blind-except
+    "FBT",    # flake8-boolean-trap
+    "B",      # flake8-bugbear
+    "A",      # flake8-builtins
+    "COM",    # flake8-commas
+    "CPY",    # flake8-copyright
+    "C4",     # flake8-comprehensions
+    "DTZ",    # flake8-datetimez
+    "T10",    # flake8-debugger
+    "DJ",     # flake8-django
+    "EM",     # flake8-errmsg
+    "EXE",    # flake8-executable
+    "FA",     # flake8-future-annotations
+    "ISC",    # flake8-implicit-str-concat
+    "ICN",    # flake8-import-conventions
+    "G",      # flake8-logging-format
+    "INP",    # flake8-no-pep420
+    "PIE",    # flake8-pie
+    "T20",    # flake8-print
+    "PYI",    # flake8-pyi
+    "PT",     # flake8-pytest-style
+    "Q",      # flake8-quotes
+    "RSE",    # flake8-raise
+    "RET",    # flake8-return
+    "SLF",    # flake8-self
+    "SLOT",   # flake8-slots
+    "SIM",    # flake8-simplify
+    "TID",    # flake8-tidy-imports
+    "TCH",    # flake8-type-checking
+    "INT",    # flake8-gettext
+    "ARG",    # flake8-unused-arguments
+    "PTH",    # flake8-use-pathlib
+    "TD",     # flake8-todos
+    "FIX",    # flake8-fixme
+    "ERA",    # eradicate
+    "PD",     # pandas-vet
+    "PGH",    # pygrep-hooks
+    "PL",     # Pylint
+    "TRY",    # tryceratops
+    "FLY",    # flynt
+    "NPY",    # NumPy-specific rules
+    "AIR",    # Airflow
+    "PERF",   # Perflint
+    "FURB",   # refurb
+    "LOG",    # flake8-logging
+    "RUF",    # Ruff-specific rules
+]
+
+# Ignore specific rules that may conflict with project needs
+ignore = [
+    "D100",   # Missing docstring in public module
+    "D104",   # Missing docstring in public package
+    "D203",   # 1 blank line required before class docstring
+    "D213",   # Multi-line docstring summary should start at the second line
+    "ANN101", # Missing type annotation for self in method
+    "ANN102", # Missing type annotation for cls in classmethod
+    "COM812", # Trailing comma missing (conflicts with formatter)
+    "ISC001", # Implicitly concatenated string literals (conflicts with formatter)
+]
+
+# Exclude directories and files
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "migrations",
+    "alembic/versions",
+]
+
+# Allow fix for all fixable rules
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+# Use double quotes for strings
+quote-style = "double"
+
+# Indent with spaces, rather than tabs
+indent-style = "space"
+
+# Respect magic trailing commas
+skip-magic-trailing-comma = false
+
+# Automatically detect the appropriate line ending
+line-ending = "auto"
+
+[tool.ruff.lint.per-file-ignores]
+# Tests can use magic values, assertions, and fixtures
+"tests/**/*.py" = [
+    "S101",   # Use of assert
+    "PLR2004", # Magic value used in comparison
+    "ANN001", # Missing type annotation for function argument
+    "ANN201", # Missing return type annotation
+    "D103",   # Missing docstring in public function
+]
+
+# Configuration files can have magic values
+"**/config.py" = ["PLR2004"]
+"**/settings.py" = ["PLR2004"]
+
+# Migration files have different standards
+"**/migrations/*.py" = ["ALL"]
+"**/alembic/versions/*.py" = ["ALL"]
+
+[tool.ruff.lint.pydocstyle]
+# Use Google docstring convention
+convention = "google"
+
+[tool.ruff.lint.pylint]
+# Maximum number of arguments for function/method
+max-args = 10
+
+# Maximum number of branches for function/method
+max-branches = 15
+
+# Maximum number of return statements
+max-returns = 8
+
+# Maximum number of statements
+max-statements = 60
+
+[tool.ruff.lint.mccabe]
+# Maximum cyclomatic complexity
+max-complexity = 10
+
+[tool.ruff.lint.isort]
+# Import sorting configuration
+known-first-party = ["linguistics_agent"]
+known-third-party = ["pydantic", "fastapi", "anthropic", "neo4j", "chromadb"]
+section-order = [
+    "future",
+    "standard-library", 
+    "third-party",
+    "first-party",
+    "local-folder"
+]
+
+[tool.ruff.lint.flake8-type-checking]
+# Enable type checking imports
+runtime-evaluated-base-classes = ["pydantic.BaseModel"]
+
+[tool.ruff.lint.flake8-pytest-style]
+# Pytest style configuration
+fixture-parentheses = false
+mark-parentheses = false
+parametrize-names-type = "tuple"
+parametrize-values-type = "tuple"
+parametrize-values-row-type = "tuple"
+
+[tool.ruff.lint.flake8-quotes]
+# Quote style configuration
+docstring-quotes = "double"
+inline-quotes = "double"
+multiline-quotes = "double"
+
+[tool.ruff.lint.flake8-bandit]
+# Security configuration
+check-typed-exception = true
+
+[tool.ruff.lint.flake8-bugbear]
+# Extend immutable calls
+extend-immutable-calls = [
+    "fastapi.Depends",
+    "fastapi.Query", 
+    "fastapi.Path",
+    "fastapi.Body"
+]
+
