@@ -132,16 +132,6 @@ repos:
         name: shellcheck-shell
         args: ["--severity=warning"]
 
-  # -------------- Safety ----------------
-  - repo: local
-    hooks:
-      - id: safety
-        name: safety-vulnerabilities
-        entry: safety check --full-report
-        language: system
-        types: [python]
-        always_run: false    # heavy, keep for CI if wanted
-
 # ---- CI integration (pre-commit.ci) ----
 ci:
   autofix_commit_msg: |

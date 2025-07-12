@@ -14,8 +14,8 @@ Rule Compliance: rules-101 v1.1+, rules-102 v1.2+, rules-103 v1.2+
 """
 
 from .agent import LinguisticsAgent
-from .grammar.ebnf_processor import EBNFProcessor
-from .grammar.antlr_integration import GrammarAnalyzer
+from .tools.ebnf_processor import EBNFProcessor
+from .tools.grammar_analyzer import GrammarAnalyzer
 
 __version__ = "1.0.0"
 __author__ = "AI Agent"
@@ -23,7 +23,6 @@ __email__ = "agent@linguistics.ai"
 
 __all__ = [
     "LinguisticsAgent",
-    "GrammarAnalyzer", 
+    "GrammarAnalyzer",
     "EBNFProcessor",
 ]
-
