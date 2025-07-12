@@ -200,10 +200,9 @@ class KnowledgeIngestionRequest(BaseModel):
 class UserRegistrationRequest(BaseModel):
     """Request model for user registration."""
     
+    username: str = Field(..., description="Username", min_length=3, max_length=50)
     email: str = Field(..., description="User email address")
-    username: str = Field(..., min_length=3, max_length=50, description="Username")
-    full_name: str = Field(..., min_length=1, max_length=100, description="Full name")
-    password: str = Field(..., min_length=8, description="Password")
+    password: str = Field(..., description="User password", min_length=6)  # Reduced from 8 to match our validation
     
     @validator('email')
     def validate_email(cls, v):
@@ -263,6 +262,7 @@ class SessionCreateRequest(BaseModel):
     
     title: str = Field(..., min_length=1, max_length=100, description="Session title")
     project_id: str = Field(..., description="Project ID")
+    context: Optional[Dict[str, Any]] = Field(None, description="Session context")
     metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
 
 
@@ -368,13 +368,6 @@ class ProjectUpdateRequest(BaseModel):
 
 
 # Session Management Request Models
-class SessionCreateRequest(BaseModel):
-    """Request model for creating a new chat session."""
-    
-    project_id: str = Field(..., description="ID of the project this session belongs to")
-    title: Optional[str] = Field(None, description="Session title", max_length=200)
-
-
 class SessionUpdateRequest(BaseModel):
     """Request model for updating a chat session."""
     
@@ -426,19 +419,21 @@ class KnowledgeSearchRequest(BaseModel):
 
 
 
-# Authentication Request Models
-class UserRegistrationRequest(BaseModel):
-    """Request model for user registration."""
-    
-    username: str = Field(..., description="Username", min_length=3, max_length=50)
-    email: str = Field(..., description="User email address")
-    password: str = Field(..., description="User password", min_length=8)
-    full_name: str = Field(..., description="User full name", min_length=1, max_length=100)
-
+# Authentication Request Models (continued)
 
 class UserLoginRequest(BaseModel):
     """Request model for user login."""
     
-    email: str = Field(..., description="User email address")
+    username: str = Field(..., description="Username")
     password: str = Field(..., description="User password")
+
+
+
+# Additional Grammar Validation Request Model
+class GrammarTextValidationRequest(BaseModel):
+    """Request model for grammar text validation."""
+    
+    grammar_text: str = Field(..., description="Grammar text to validate", min_length=1)
+    grammar_type: Optional[str] = Field(default="ebnf", description="Type of grammar")
+    validation_level: Optional[str] = Field(default="standard", description="Validation level")
 

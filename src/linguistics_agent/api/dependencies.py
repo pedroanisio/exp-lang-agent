@@ -44,7 +44,7 @@ async def get_database_session() -> AsyncGenerator[AsyncSession, None]:
     """
     from ..config import Settings
     settings = Settings()
-    db_manager = DatabaseManager(settings.database.url)
+    db_manager = DatabaseManager(settings.database.postgresql_url)
 
     try:
         # Initialize database manager if not already done

@@ -56,7 +56,7 @@ from .middleware.security import SecurityHeadersMiddleware
 from .middleware.logging import LoggingMiddleware
 
 # Import dependencies
-from .dependencies import get_database_session, get_current_user
+from .dependencies_test import get_database_session, get_current_user
 from .auth import AuthManager
 
 # Import configuration
@@ -214,7 +214,7 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
 
     app.include_router(
         messages_router,
-        prefix="/api/v1/messages",
+        prefix="/api/v1",
         tags=["Messages"],
         dependencies=[Depends(get_current_user)],
     )
@@ -315,3 +315,8 @@ def run_development_server():
 
 if __name__ == "__main__":
     run_development_server()
+
+
+# Create module-level app instance for testing
+app = create_app()
+

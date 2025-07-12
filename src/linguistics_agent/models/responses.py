@@ -285,14 +285,10 @@ class UserRegistrationResponse(BaseModel):
     """Response model for user registration."""
     
     id: str = Field(..., description="User ID")
-    email: str = Field(..., description="User email")
     username: str = Field(..., description="Username")
-    full_name: str = Field(..., description="Full name")
-    role: str = Field(..., description="User role")
+    email: str = Field(..., description="User email address")
+    created_at: str = Field(..., description="Registration timestamp")
     is_active: bool = Field(..., description="Account active status")
-    created_at: datetime = Field(..., description="Account creation timestamp")
-    access_token: str = Field(..., description="JWT access token")
-    token_type: str = Field(..., description="Token type")
 
 
 class UserLoginResponse(BaseModel):
@@ -300,25 +296,23 @@ class UserLoginResponse(BaseModel):
     
     access_token: str = Field(..., description="JWT access token")
     token_type: str = Field(..., description="Token type")
+    expires_in: int = Field(..., description="Token expiration time in seconds")
+    expires_at: str = Field(..., description="Token expiration timestamp")
     user_id: str = Field(..., description="User ID")
-    email: str = Field(..., description="User email")
     username: str = Field(..., description="Username")
-    full_name: str = Field(..., description="Full name")
-    role: str = Field(..., description="User role")
 
 
 class UserProfileResponse(BaseModel):
     """Response model for user profile."""
     
     id: str = Field(..., description="User ID")
-    email: str = Field(..., description="User email")
     username: str = Field(..., description="Username")
-    full_name: str = Field(..., description="Full name")
+    email: str = Field(..., description="User email address")
     role: str = Field(..., description="User role")
+    created_at: str = Field(..., description="Registration timestamp")
+    last_login: str = Field(..., description="Last login timestamp")
     is_active: bool = Field(..., description="Account active status")
-    created_at: datetime = Field(..., description="Account creation timestamp")
-    updated_at: datetime = Field(..., description="Last update timestamp")
-    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+    preferences: Dict[str, Any] = Field(..., description="User preferences")
 
 
 class TokenRefreshResponse(BaseModel):
@@ -363,15 +357,14 @@ class GrammarAnalysisResponse(BaseModel):
 # Project and Session Management Response Models
 
 class ProjectResponse(BaseModel):
-    """Response model for project information."""
+    """Response model for project operations."""
     
     id: str = Field(..., description="Project ID")
     name: str = Field(..., description="Project name")
     description: Optional[str] = Field(None, description="Project description")
-    user_id: str = Field(..., description="Owner user ID")
-    created_at: datetime = Field(..., description="Creation timestamp")
-    updated_at: datetime = Field(..., description="Last update timestamp")
-    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+    user_id: str = Field(..., description="ID of the project owner")
+    created_at: str = Field(..., description="Creation timestamp")
+    updated_at: str = Field(..., description="Last update timestamp")
 
 
 class ProjectListResponse(BaseModel):
@@ -565,25 +558,15 @@ class DetailedHealthResponse(BaseModel):
 
 
 
-# Project Management Response Models
-class ProjectResponse(BaseModel):
-    """Response model for project operations."""
-    
-    id: str = Field(..., description="Project ID")
-    name: str = Field(..., description="Project name")
-    description: Optional[str] = Field(None, description="Project description")
-    user_id: str = Field(..., description="ID of the project owner")
-    created_at: str = Field(..., description="Creation timestamp")
-    updated_at: str = Field(..., description="Last update timestamp")
-
+# Project Management Response Models (continued)
 
 class ProjectListResponse(BaseModel):
     """Response model for project listing."""
     
-    projects: List[ProjectResponse] = Field(..., description="List of projects")
+    items: List[ProjectResponse] = Field(..., description="List of projects")
     total: int = Field(..., description="Total number of projects")
     page: int = Field(..., description="Current page number")
-    per_page: int = Field(..., description="Items per page")
+    size: int = Field(..., description="Items per page")
 
 
 # Session Management Response Models
@@ -602,10 +585,10 @@ class SessionResponse(BaseModel):
 class SessionListResponse(BaseModel):
     """Response model for session listing."""
     
-    sessions: List[SessionResponse] = Field(..., description="List of sessions")
+    items: List[SessionResponse] = Field(..., description="List of sessions")
     total: int = Field(..., description="Total number of sessions")
     page: int = Field(..., description="Current page number")
-    per_page: int = Field(..., description="Items per page")
+    size: int = Field(..., description="Items per page")
 
 
 # Message Response Models
@@ -624,11 +607,11 @@ class MessageResponse(BaseModel):
 class MessageListResponse(BaseModel):
     """Response model for message listing."""
     
-    messages: List[MessageResponse] = Field(..., description="List of messages")
+    items: List[MessageResponse] = Field(..., description="List of messages")
     total: int = Field(..., description="Total number of messages")
     session_id: str = Field(..., description="Session ID")
     page: int = Field(..., description="Current page number")
-    per_page: int = Field(..., description="Items per page")
+    size: int = Field(..., description="Items per page")
 
 
 # Analysis Response Models
@@ -649,12 +632,13 @@ class GrammarValidationResponse(BaseModel):
     """Response model for grammar validation."""
     
     validation_id: str = Field(..., description="Validation ID")
-    grammar_rules: str = Field(..., description="EBNF grammar rules")
-    test_input: str = Field(..., description="Input tested against grammar")
-    is_valid: bool = Field(..., description="Whether input is valid according to grammar")
-    errors: List[str] = Field(..., description="List of validation errors")
-    warnings: List[str] = Field(..., description="List of validation warnings")
-    parse_tree: Optional[Dict[str, Any]] = Field(None, description="Parse tree if valid")
+    grammar_rules: str = Field(..., description="Grammar rules that were validated")
+    test_input: str = Field(..., description="Test input used")
+    is_valid: bool = Field(..., description="Whether the grammar is valid")
+    valid: bool = Field(..., description="Whether the grammar is valid (alias)")
+    errors: List[str] = Field(..., description="Validation errors")
+    warnings: List[str] = Field(..., description="Validation warnings")
+    parse_tree: Dict[str, Any] = Field(..., description="Parse tree if valid")
     validation_time_ms: int = Field(..., description="Validation time in milliseconds")
     created_at: str = Field(..., description="Creation timestamp")
 
@@ -697,35 +681,7 @@ class KnowledgeSearchResponse(BaseModel):
     created_at: str = Field(..., description="Creation timestamp")
 
 
-# Authentication Response Models
-class UserRegistrationResponse(BaseModel):
-    """Response model for user registration."""
-    
-    id: str = Field(..., description="User ID")
-    username: str = Field(..., description="Username")
-    email: str = Field(..., description="User email address")
-    full_name: str = Field(..., description="User full name")
-    created_at: str = Field(..., description="Registration timestamp")
-
-
-class UserLoginResponse(BaseModel):
-    """Response model for user login."""
-    
-    access_token: str = Field(..., description="JWT access token")
-    token_type: str = Field(default="bearer", description="Token type")
-    expires_in: int = Field(..., description="Token expiration time in seconds")
-    user: UserRegistrationResponse = Field(..., description="User information")
-
-
-class UserProfileResponse(BaseModel):
-    """Response model for user profile."""
-    
-    id: str = Field(..., description="User ID")
-    email: str = Field(..., description="User email address")
-    full_name: str = Field(..., description="User full name")
-    created_at: str = Field(..., description="Registration timestamp")
-    updated_at: str = Field(..., description="Last update timestamp")
-
+# Authentication Response Models (continued)
 
 class TokenRefreshResponse(BaseModel):
     """Response model for token refresh."""

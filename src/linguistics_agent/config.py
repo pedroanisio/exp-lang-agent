@@ -16,8 +16,15 @@ from pydantic_settings import BaseSettings
 
 
 class DatabaseConfig(BaseSettings):
-    """Database configuration for Neo4j and ChromaDB."""
+    """Database configuration for PostgreSQL, Neo4j and ChromaDB."""
 
+    # PostgreSQL Configuration (Primary database)
+    postgresql_url: str = Field(
+        default="sqlite+aiosqlite:///./test.db", 
+        env="DATABASE_URL",
+        description="PostgreSQL database URL"
+    )
+    
     # Neo4j Configuration
     neo4j_uri: str = Field(default="bolt://localhost:7687", env="NEO4J_URI")
     neo4j_user: str = Field(default="neo4j", env="NEO4J_USER")
