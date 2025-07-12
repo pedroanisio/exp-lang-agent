@@ -24,7 +24,7 @@ from .tools.grammar_analyzer import GrammarAnalyzer
 @dataclass
 class AgentConfig:
     """Configuration for the LinguisticsAgent."""
-    
+
     model: str = "claude-3-5-sonnet-20241022"
     temperature: float = 0.1
     max_tokens: int = 4000
@@ -36,7 +36,7 @@ class AgentConfig:
 class LinguisticsAgent:
     """
     Specialized AI agent for linguistics, compilers, EBNF, and ANTLR analysis.
-    
+
     This agent combines LLM capabilities with structured knowledge retrieval
     from Neo4j and ChromaDB databases, providing expert-level assistance in:
     - Computational linguistics
@@ -45,29 +45,33 @@ class LinguisticsAgent:
     - ANTLR parser generation and optimization
     - Formal language theory
     """
-    
+
     def __init__(self, config: Optional[AgentConfig] = None) -> None:
         """
         Initialize the LinguisticsAgent with configuration.
-        
+
         Args:
             config: Optional configuration for the agent
         """
         self.config = config or AgentConfig()
         self.session_id: Optional[str] = None
         self.context_history: List[Dict[str, Any]] = []
-        
+
         # Initialize Pydantic-AI agent
         self._agent = Agent(
             model=self.config.model,
             system_prompt=self._get_system_prompt(),
-            tools=[self._ebnf_processing_tool, self._grammar_analysis_tool] if self.config.enable_tools else []
+            tools=(
+                [self._ebnf_processing_tool, self._grammar_analysis_tool]
+                if self.config.enable_tools
+                else []
+            ),
         )
-        
+
         # Initialize processors
         self.ebnf_processor = EBNFProcessor()
         self.grammar_analyzer = GrammarAnalyzer()
-    
+
     def _get_system_prompt(self) -> str:
         """Get the system prompt for the agent."""
         return """You are a specialized AI agent expert in linguistics, compilers, EBNF, and ANTLR.
@@ -87,55 +91,57 @@ class LinguisticsAgent:
         Always provide accurate, detailed, and practical guidance while citing
         relevant sources from your knowledge base when applicable.
         """
-    
-    async def process_query(self, query: Union[str, LinguisticsQuery]) -> LinguisticsResponse:
+
+    async def process_query(
+        self, query: Union[str, LinguisticsQuery]
+    ) -> LinguisticsResponse:
         """
         Process a linguistics query and return a comprehensive response.
-        
+
         Args:
             query: The query to process (string or LinguisticsQuery object)
-            
+
         Returns:
             LinguisticsResponse with the agent's analysis and recommendations
         """
         # Convert string query to LinguisticsQuery if needed
         if isinstance(query, str):
-            query_obj = LinguisticsQuery(
-                text=query,
-                query_type="general",
-                context={}
-            )
+            query_obj = LinguisticsQuery(text=query, query_type="general", context={})
         else:
             query_obj = query
-        
+
         # Store query in context history
-        self.context_history.append({
-            "type": "query",
-            "content": query_obj.text,
-            "timestamp": "2024-12-07T00:00:00Z"  # Simplified for testing
-        })
-        
+        self.context_history.append(
+            {
+                "type": "query",
+                "content": query_obj.text,
+                "timestamp": "2024-12-07T00:00:00Z",  # Simplified for testing
+            }
+        )
+
         # Process with Pydantic-AI agent
         try:
             result = await self._agent.run(query_obj.text)
-            
+
             response = LinguisticsResponse(
                 content=result.data,
                 confidence=0.95,  # Simplified for testing
                 sources=[],
                 tools_used=[],
-                context_preserved=True
+                context_preserved=True,
             )
-            
+
             # Store response in context history
-            self.context_history.append({
-                "type": "response",
-                "content": response.content,
-                "timestamp": "2024-12-07T00:00:00Z"  # Simplified for testing
-            })
-            
+            self.context_history.append(
+                {
+                    "type": "response",
+                    "content": response.content,
+                    "timestamp": "2024-12-07T00:00:00Z",  # Simplified for testing
+                }
+            )
+
             return response
-            
+
         except Exception as e:
             # Handle errors gracefully
             return LinguisticsResponse(
@@ -144,17 +150,19 @@ class LinguisticsAgent:
                 sources=[],
                 tools_used=[],
                 context_preserved=False,
-                error=str(e)
+                error=str(e),
             )
-    
-    async def _ebnf_processing_tool(self, ctx: RunContext[None], ebnf_grammar: str) -> str:
+
+    async def _ebnf_processing_tool(
+        self, ctx: RunContext[None], ebnf_grammar: str
+    ) -> str:
         """
         Tool for processing and validating EBNF grammars.
-        
+
         Args:
             ctx: Pydantic-AI run context
             ebnf_grammar: EBNF grammar string to process
-            
+
         Returns:
             Processing result as string
         """
@@ -163,15 +171,17 @@ class LinguisticsAgent:
             return f"EBNF validation result: {result}"
         except Exception as e:
             return f"EBNF processing error: {str(e)}"
-    
-    async def _grammar_analysis_tool(self, ctx: RunContext[None], grammar_text: str) -> str:
+
+    async def _grammar_analysis_tool(
+        self, ctx: RunContext[None], grammar_text: str
+    ) -> str:
         """
         Tool for analyzing grammar structures and patterns.
-        
+
         Args:
             ctx: Pydantic-AI run context
             grammar_text: Grammar text to analyze
-            
+
         Returns:
             Analysis result as string
         """
@@ -180,26 +190,25 @@ class LinguisticsAgent:
             return f"Grammar analysis result: {result}"
         except Exception as e:
             return f"Grammar analysis error: {str(e)}"
-    
+
     def get_context_history(self) -> List[Dict[str, Any]]:
         """
         Get the conversation context history.
-        
+
         Returns:
             List of context entries
         """
         return self.context_history.copy()
-    
+
     def clear_context(self) -> None:
         """Clear the conversation context history."""
         self.context_history.clear()
-    
+
     def set_session_id(self, session_id: str) -> None:
         """
         Set the session ID for this agent instance.
-        
+
         Args:
             session_id: Unique session identifier
         """
         self.session_id = session_id
-
