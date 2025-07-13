@@ -189,8 +189,13 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
     if settings.app.env == "production":
         app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.allowed_hosts)
 
-    # Add rate limiting middleware
-    app.add_middleware(RateLimitMiddleware)
+    # Add rate limiting middleware with balanced limits for TDD GREEN phase
+    app.add_middleware(
+        RateLimitMiddleware,
+        calls_per_minute=100,  # Allow 100 requests per minute
+        burst_limit=80,        # Allow 80 burst requests, so 100 requests will trigger rate limiting
+        window_size=60
+    )
 
     # Add logging middleware
     app.add_middleware(LoggingMiddleware)

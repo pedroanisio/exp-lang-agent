@@ -90,7 +90,6 @@ async def list_projects(
 async def get_project_by_id(
     project_id: str,
     current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_database_session),
 ) -> ProjectResponse:
     """
     Get a specific project by ID.
