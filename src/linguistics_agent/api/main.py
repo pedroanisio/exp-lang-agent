@@ -44,7 +44,7 @@ from .routes.sessions import router as sessions_router
 from .routes.messages import router as messages_router
 from .routes.analysis import router as analysis_router
 from .routes.knowledge import router as knowledge_router
-from .routes.health import router as health_router
+from .routes.health import router as health_router, metrics_router
 from .routes.users import router as users_router
 from .routes.admin import router as admin_router
 from .routes.linguistics import router as linguistics_router
@@ -238,6 +238,7 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
     app.include_router(admin_router, prefix="/api/v1/admin", tags=["Administration"])
     app.include_router(linguistics_router, prefix="/api/v1/linguistics", tags=["Linguistics Analysis"])
     app.include_router(health_router, prefix="/api/v1", tags=["Health & Monitoring"])
+    app.include_router(metrics_router, prefix="/api/v1", tags=["Metrics"])
     
     # Add CORS OPTIONS handlers
     app.include_router(cors_options_router, prefix="/api/v1", tags=["CORS"])

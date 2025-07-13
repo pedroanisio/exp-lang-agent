@@ -57,7 +57,6 @@ async def get_database_session() -> AsyncGenerator[AsyncSession, None]:
 
 async def get_current_user(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
-    db: AsyncSession = Depends(get_database_session),
 ) -> User:
     """
     Dependency to get current authenticated user.
@@ -67,7 +66,7 @@ async def get_current_user(
     if not credentials:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Not authenticated",
+            detail="Authentication required",
             headers={"WWW-Authenticate": "Bearer"},
         )
     

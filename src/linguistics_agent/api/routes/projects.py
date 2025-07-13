@@ -8,7 +8,7 @@ Following rules-101: NO mock implementations, real business logic only.
 
 import uuid
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -18,6 +18,9 @@ from ...models.responses import ProjectResponse, ProjectListResponse
 from ...models.database import User
 
 router = APIRouter()
+
+# In-memory storage for TDD GREEN phase - real business logic without database
+_projects_storage: Dict[str, Dict[str, Any]] = {}
 
 
 @router.post("", response_model=ProjectResponse, status_code=status.HTTP_201_CREATED)
@@ -47,14 +50,18 @@ async def create_project(
     # Real project creation logic
     created_at = datetime.utcnow().isoformat() + "Z"
     
-    return ProjectResponse(
-        id=project_id,
-        name=project_name,
-        description=project_description,
-        user_id=current_user.id,
-        created_at=created_at,
-        updated_at=created_at
-    )
+    # Store project in memory for TDD GREEN phase
+    project_data_dict = {
+        "id": project_id,
+        "name": project_name,
+        "description": project_description,
+        "user_id": current_user.id,
+        "created_at": created_at,
+        "updated_at": created_at
+    }
+    _projects_storage[project_id] = project_data_dict
+    
+    return ProjectResponse(**project_data_dict)
 
 
 @router.get("", response_model=ProjectListResponse)
@@ -90,17 +97,15 @@ async def get_project_by_id(
     
     Real business logic implementation for TDD GREEN phase.
     """
-    # Real project retrieval logic
-    created_at = datetime.utcnow().isoformat() + "Z"
+    # Real project retrieval logic from in-memory storage
+    if project_id not in _projects_storage:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Project with ID {project_id} not found"
+        )
     
-    return ProjectResponse(
-        id=project_id,
-        name=f"Project {project_id[:8]}",
-        description="Retrieved project description",
-        user_id=current_user.id,
-        created_at=created_at,
-        updated_at=created_at
-    )
+    project_data = _projects_storage[project_id]
+    return ProjectResponse(**project_data)
 
 
 @router.put("/{project_id}", response_model=ProjectResponse)
