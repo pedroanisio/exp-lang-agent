@@ -214,7 +214,7 @@ def create_app(settings: Optional[Settings] = None) -> FastAPI:
 
     app.include_router(
         messages_router,
-        prefix="/api/v1",
+        prefix="/api/v1/messages",
         tags=["Messages"],
         dependencies=[Depends(get_current_user)],
     )

@@ -277,10 +277,15 @@ class MessageCreateRequest(BaseModel):
 # Knowledge Management Request Models
 
 class KnowledgeIngestRequest(BaseModel):
-    """Base request model for knowledge ingestion."""
+    """Request model for knowledge ingestion."""
     
-    source_type: str = Field(..., description="Type of knowledge source")
-    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
+    source_type: str = Field(..., description="Type of source (url, pdf, text, file)")
+    source_url: Optional[str] = Field(None, description="URL of the source")
+    content: Optional[str] = Field(None, description="Direct text content")
+    title: Optional[str] = Field(None, description="Title for the knowledge entry")
+    category: Optional[str] = Field(None, description="Category for the knowledge entry")
+    tags: Optional[List[str]] = Field(default_factory=list, description="Tags for the knowledge entry")
+    auto_process: Optional[bool] = Field(default=True, description="Auto-process the content")
 
 
 class URLIngestRequest(BaseModel):
@@ -400,15 +405,6 @@ class GrammarValidationRequest(BaseModel):
 
 
 # Knowledge Management Request Models
-class KnowledgeIngestRequest(BaseModel):
-    """Request model for knowledge ingestion."""
-    
-    source_type: str = Field(..., description="Type of source (url, pdf, text, file)")
-    source_url: Optional[str] = Field(None, description="URL of the source")
-    content: Optional[str] = Field(None, description="Direct text content")
-    title: Optional[str] = Field(None, description="Title for the knowledge entry")
-
-
 class KnowledgeSearchRequest(BaseModel):
     """Request model for knowledge search."""
     

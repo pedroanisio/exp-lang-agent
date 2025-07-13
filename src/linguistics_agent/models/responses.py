@@ -412,11 +412,16 @@ class MessageListResponse(BaseModel):
 class KnowledgeIngestResponse(BaseModel):
     """Response model for knowledge ingestion."""
     
-    success: bool = Field(..., description="Whether ingestion was successful")
-    entries_created: int = Field(..., description="Number of knowledge entries created")
-    processing_time: float = Field(..., description="Processing time in seconds")
-    source_type: str = Field(..., description="Type of source ingested")
-    source_identifier: str = Field(..., description="Source identifier")
+    ingest_id: str = Field(..., description="Ingestion process ID")
+    task_id: str = Field(..., description="Task ID for tracking")
+    status: str = Field(..., description="Ingestion status")
+    source_type: str = Field(..., description="Type of source")
+    source_url: Optional[str] = Field(None, description="URL of the source")
+    title: Optional[str] = Field(None, description="Title of the knowledge entry")
+    category: Optional[str] = Field(None, description="Category of the knowledge entry")
+    tags: Optional[List[str]] = Field(default_factory=list, description="Tags for the knowledge entry")
+    created_at: str = Field(..., description="Creation timestamp")
+    estimated_completion: str = Field(..., description="Estimated completion time")
     metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
 
 
@@ -437,10 +442,16 @@ class KnowledgeEntryResponse(BaseModel):
 class KnowledgeSearchResponse(BaseModel):
     """Response model for knowledge search."""
     
-    entries: List[KnowledgeEntryResponse] = Field(..., description="Search results")
-    total_count: int = Field(..., description="Total number of matching entries")
+    search_id: str = Field(..., description="Search process ID")
     query: str = Field(..., description="Search query")
-    processing_time: float = Field(..., description="Search processing time")
+    results: List[Dict[str, Any]] = Field(default_factory=list, description="Search results")
+    total_results: int = Field(..., description="Total number of results")
+    search_type: str = Field(..., description="Type of search performed")
+    execution_time_ms: int = Field(..., description="Search execution time in milliseconds")
+    search_time_ms: int = Field(..., description="Search time in milliseconds")
+    filters_applied: Dict[str, Any] = Field(default_factory=dict, description="Filters applied to search")
+    created_at: str = Field(..., description="Creation timestamp")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
 
 
 class KnowledgeStatsResponse(BaseModel):
@@ -644,15 +655,16 @@ class GrammarValidationResponse(BaseModel):
 
 
 # Knowledge Management Response Models
-class KnowledgeIngestResponse(BaseModel):
-    """Response model for knowledge ingestion."""
+class KnowledgeSearchResponse(BaseModel):
+    """Response model for knowledge search."""
     
-    ingestion_id: str = Field(..., description="Ingestion process ID")
-    source_type: str = Field(..., description="Type of source")
-    source_url: Optional[str] = Field(None, description="URL of the source")
-    status: str = Field(..., description="Ingestion status")
-    estimated_completion_time: str = Field(..., description="Estimated completion time")
-    created_at: str = Field(..., description="Creation timestamp")
+    search_id: str = Field(..., description="Search process ID")
+    query: str = Field(..., description="Search query")
+    results: List[Dict[str, Any]] = Field(default_factory=list, description="Search results")
+    total_results: int = Field(..., description="Total number of results")
+    search_type: str = Field(..., description="Type of search performed")
+    execution_time_ms: int = Field(..., description="Search execution time in milliseconds")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Additional metadata")
 
 
 class KnowledgeEntryResponse(BaseModel):
@@ -673,8 +685,8 @@ class KnowledgeSearchResponse(BaseModel):
     """Response model for knowledge search."""
     
     query: str = Field(..., description="Search query")
-    results: List[KnowledgeEntryResponse] = Field(..., description="Search results")
-    total_results: int = Field(..., description="Total number of results")
+    items: List[KnowledgeEntryResponse] = Field(..., description="Search results")
+    total: int = Field(..., description="Total number of results")
     search_time_ms: int = Field(..., description="Search time in milliseconds")
     search_type: str = Field(..., description="Type of search performed")
     filters_applied: Dict[str, Any] = Field(..., description="Filters applied to search")
